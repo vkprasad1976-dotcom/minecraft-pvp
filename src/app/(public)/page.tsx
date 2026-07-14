@@ -1,9 +1,15 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
+import { seedDatabase } from "@/lib/seed";
 
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
+  const count = await prisma.player.count();
+  if (count === 0) {
+    await seedDatabase();
+  }
+
   const [topPlayers, totalPlayers, totalAnnouncements, latestAnnouncements] =
     await Promise.all([
       prisma.player.findMany({

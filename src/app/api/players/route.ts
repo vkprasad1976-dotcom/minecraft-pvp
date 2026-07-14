@@ -1,8 +1,11 @@
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/auth";
+import { seedDatabase } from "@/lib/seed";
 
 export async function GET() {
+  const count = await prisma.player.count();
+  if (count === 0) await seedDatabase();
   const players = await prisma.player.findMany({
     orderBy: { sortOrder: "asc" },
   });
