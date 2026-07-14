@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { signToken } from "@/lib/auth";
+import { seedDatabase } from "@/lib/seed";
 
 export async function POST(request: Request) {
   try {
@@ -11,7 +12,11 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Username and password required" }, { status: 400 });
     }
 
-    const admin = await prisma.admin.findFirst({ where: { username } });
+    let admin = await prisma.admin.findFirst({ where: { username } });
+    if (!admin) {
+      await seedDatabase();
+      admin = await prisma.admin.findFirst({ where: { username } });
+    }
     if (!admin) {
       return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
     }
