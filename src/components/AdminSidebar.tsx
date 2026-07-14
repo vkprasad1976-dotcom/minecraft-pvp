@@ -14,6 +14,7 @@ import {
   X,
   Shield,
 } from "lucide-react";
+import { authHeaders, clearAdminToken } from "@/lib/client-auth";
 
 const navItems = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
@@ -28,7 +29,8 @@ export default function AdminSidebar({ children }: { children: React.ReactNode }
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const handleLogout = async () => {
-    await fetch("/api/auth/me", { method: "DELETE" });
+    await fetch("/api/auth/me", { method: "DELETE", headers: { ...authHeaders() } });
+    clearAdminToken();
     window.location.href = "/admin/login";
   };
 

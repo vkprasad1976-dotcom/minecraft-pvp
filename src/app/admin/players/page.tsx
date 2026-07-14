@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import AdminSidebar from "@/components/AdminSidebar";
 import { Plus, Pencil, Trash2, X, Search } from "lucide-react";
+import { authHeaders } from "@/lib/client-auth";
 
 interface Player {
   id: string;
@@ -108,7 +109,7 @@ export default function AdminPlayersPage() {
 
     const res = await fetch(url, {
       method,
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", ...authHeaders() },
       body: JSON.stringify(payload),
     });
 
@@ -126,7 +127,7 @@ export default function AdminPlayersPage() {
 
   const handleDelete = async (id: string) => {
     if (!confirm("Delete this player? This cannot be undone.")) return;
-    const res = await fetch(`/api/players/${id}`, { method: "DELETE" });
+    const res = await fetch(`/api/players/${id}`, { method: "DELETE", headers: { ...authHeaders() } });
     if (res.ok) {
       fetchPlayers();
       showMsg("Player deleted");

@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import AdminSidebar from "@/components/AdminSidebar";
 import { Save, Key, User } from "lucide-react";
+import { authHeaders } from "@/lib/client-auth";
 
 export default function AdminSettingsPage() {
   const [username, setUsername] = useState("");
@@ -40,7 +41,7 @@ export default function AdminSettingsPage() {
     try {
       const res = await fetch("/api/settings", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...authHeaders() },
         body: JSON.stringify({ currentPassword, newPassword }),
       });
       const data = await res.json();

@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import AdminSidebar from "@/components/AdminSidebar";
 import { Plus, Pencil, Trash2, X, Pin, Search } from "lucide-react";
 import RichTextEditor from "@/components/RichTextEditor";
+import { authHeaders } from "@/lib/client-auth";
 
 interface Announcement {
   id: string;
@@ -77,7 +78,7 @@ export default function AdminAnnouncementsPage() {
 
     const res = await fetch(url, {
       method,
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", ...authHeaders() },
       body: JSON.stringify(form),
     });
 
@@ -95,7 +96,7 @@ export default function AdminAnnouncementsPage() {
 
   const handleDelete = async (id: string) => {
     if (!confirm("Delete this announcement? This cannot be undone.")) return;
-    const res = await fetch(`/api/announcements/${id}`, { method: "DELETE" });
+    const res = await fetch(`/api/announcements/${id}`, { method: "DELETE", headers: { ...authHeaders() } });
     if (res.ok) {
       fetchAnnouncements();
       showMsg("Announcement deleted");
@@ -105,7 +106,7 @@ export default function AdminAnnouncementsPage() {
   const togglePin = async (a: Announcement) => {
     const res = await fetch(`/api/announcements/${a.id}`, {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", ...authHeaders() },
       body: JSON.stringify({ pinned: !a.pinned }),
     });
     if (res.ok) {

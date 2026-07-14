@@ -21,11 +21,16 @@ export function verifyToken(token: string): AdminPayload | null {
 }
 
 function getTokenFromRequest(request: Request): string | undefined {
+  const authHeader = request.headers.get("authorization");
+  if (authHeader?.startsWith("Bearer ")) {
+    return authHeader.substring(7);
+  }
   const cookieHeader = request.headers.get("cookie");
-  if (!cookieHeader) return undefined;
-  const match = cookieHeader.split(";").find((c) => c.trim().startsWith("admin_token="));
-  if (!match) return undefined;
-  return match.trim().substring("admin_token=".length);
+  if (cookieHeader) {
+    const match = cookieHeader.split(";").find((c) => c.trim().startsWith("admin_token="));
+    if (match) return match.trim().substring("admin_token=".length);
+  }
+  return undefined;
 }
 
 export async function getAuthFromCookies(): Promise<AdminPayload | null> {

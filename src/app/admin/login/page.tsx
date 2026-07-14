@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Shield } from "lucide-react";
+import { setAdminToken } from "@/lib/client-auth";
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -26,6 +27,7 @@ export default function AdminLoginPage() {
       const data = await res.json();
 
       if (res.ok) {
+        setAdminToken(data.token);
         router.push("/admin");
       } else {
         setError(data.error || "Invalid credentials");

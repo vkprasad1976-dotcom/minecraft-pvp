@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import AdminSidebar from "@/components/AdminSidebar";
 import Link from "next/link";
 import { ExternalLink, Trash2, Plus, X, GripVertical } from "lucide-react";
+import { authHeaders } from "@/lib/client-auth";
 
 interface Player {
   id: string;
@@ -51,7 +52,7 @@ export default function AdminLeaderboardPage() {
     try {
       const res = await fetch("/api/players/reorder", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...authHeaders() },
         body: JSON.stringify({ orders }),
       });
       if (res.ok) showMsg("Leaderboard reordered!");
@@ -65,7 +66,8 @@ export default function AdminLeaderboardPage() {
     const maxOrder = players.length > 0 ? Math.max(...players.map((p) => p.sortOrder)) : 0;
     const res = await fetch("/api/players", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", ...authHeaders() },
+      credentials: "include",
       body: JSON.stringify({
         username: form.username,
         elo: Number(form.elo),
@@ -85,7 +87,7 @@ export default function AdminLeaderboardPage() {
 
   const handleRemove = async (id: string, username: string) => {
     if (!confirm(`Remove ${username} from the leaderboard?`)) return;
-    const res = await fetch(`/api/players/${id}`, { method: "DELETE" });
+    const res = await fetch(`/api/players/${id}`, { method: "DELETE", headers: authHeaders() });
     if (res.ok) {
       loadPlayers();
       showMsg(`${username} removed`);
@@ -131,7 +133,7 @@ export default function AdminLeaderboardPage() {
     setEditingBadge(null);
     const res = await fetch(`/api/players/${id}`, {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", ...authHeaders() },
       body: JSON.stringify({ badge: badge || null }),
     });
     if (res.ok) {
@@ -144,7 +146,7 @@ export default function AdminLeaderboardPage() {
     setEditingElo(null);
     const res = await fetch(`/api/players/${id}`, {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", ...authHeaders() },
       body: JSON.stringify({ elo }),
     });
     if (res.ok) {

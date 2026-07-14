@@ -13,6 +13,7 @@ import {
   Plus,
   X,
 } from "lucide-react";
+import { authHeaders } from "@/lib/client-auth";
 
 interface Player {
   id: string;
@@ -51,8 +52,8 @@ export default function AdminDashboardPage() {
   const load = async () => {
     try {
       const [playersRes, announcementsRes] = await Promise.all([
-        fetch("/api/players"),
-        fetch("/api/announcements"),
+        fetch("/api/players", { headers: { ...authHeaders() } }),
+        fetch("/api/announcements", { headers: { ...authHeaders() } }),
       ]);
       const players: Player[] = await playersRes.json();
       const announcements: Announcement[] = await announcementsRes.json();
@@ -86,7 +87,7 @@ export default function AdminDashboardPage() {
     e.preventDefault();
     const res = await fetch("/api/players", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", ...authHeaders() },
       body: JSON.stringify({ username: form.username, elo: Number(form.elo) }),
     });
     if (res.ok) {
@@ -104,7 +105,7 @@ export default function AdminDashboardPage() {
     setEditingBadge(null);
     const res = await fetch(`/api/players/${id}`, {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", ...authHeaders() },
       body: JSON.stringify({ badge: badge || null }),
     });
     if (res.ok) {
@@ -125,7 +126,7 @@ export default function AdminDashboardPage() {
     setEditingElo(null);
     const res = await fetch(`/api/players/${id}`, {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", ...authHeaders() },
       body: JSON.stringify({ elo }),
     });
     if (res.ok) {
