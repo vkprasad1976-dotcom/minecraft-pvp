@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
-import { requireAdmin } from "@/lib/auth";
+import { requireAdminFromRequest } from "@/lib/auth";
 
 export async function GET() {
   const announcements = await prisma.announcement.findMany({
@@ -11,7 +11,7 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
-    await requireAdmin();
+    requireAdminFromRequest(request);
   } catch {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }

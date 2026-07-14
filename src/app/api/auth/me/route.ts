@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
-import { getAuthFromCookies } from "@/lib/auth";
+import { getAuthFromRequest } from "@/lib/auth";
 
-export async function GET() {
-  const admin = await getAuthFromCookies();
+export async function GET(request: Request) {
+  const admin = getAuthFromRequest(request);
   if (!admin) {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
   }

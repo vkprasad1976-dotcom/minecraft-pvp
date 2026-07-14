@@ -20,17 +20,36 @@ export function verifyToken(token: string): AdminPayload | null {
   }
 }
 
+function getTokenFromRequest(request: Request): string | undefined {
+  const cookieHeader = request.headers.get("cookie");
+  if (!cookieHeader) return undefined;
+  const match = cookieHeader.split(";").find((c) => c.trim().startsWith("admin_token="));
+  return match?.trim().split("=")[1];
+}
+
 export async function getAuthFromCookies(): Promise<AdminPayload | null> {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("admin_token")?.value;
+  try {
+    const cookieStore = await cookies();
+    const token = cookieStore.get("admin_token")?.value;
+    if (token) return verifyToken(token);
+  } catch {}
+  return null;
+}
+
+export function getAuthFromRequest(request: Request): AdminPayload | null {
+  const token = getTokenFromRequest(request);
   if (!token) return null;
   return verifyToken(token);
 }
 
 export async function requireAdmin(): Promise<AdminPayload> {
   const admin = await getAuthFromCookies();
-  if (!admin) {
-    throw new Error("UNAUTHORIZED");
-  }
+  if (!admin) throw new Error("UNAUTHORIZED");
+  return admin;
+}
+
+export function requireAdminFromRequest(request: Request): AdminPayload {
+  const admin = getAuthFromRequest(request);
+  if (!admin) throw new Error("UNAUTHORIZED");
   return admin;
 }
