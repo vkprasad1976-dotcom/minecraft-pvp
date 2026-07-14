@@ -24,7 +24,8 @@ function getTokenFromRequest(request: Request): string | undefined {
   const cookieHeader = request.headers.get("cookie");
   if (!cookieHeader) return undefined;
   const match = cookieHeader.split(";").find((c) => c.trim().startsWith("admin_token="));
-  return match?.trim().split("=")[1];
+  if (!match) return undefined;
+  return match.trim().substring("admin_token=".length);
 }
 
 export async function getAuthFromCookies(): Promise<AdminPayload | null> {
