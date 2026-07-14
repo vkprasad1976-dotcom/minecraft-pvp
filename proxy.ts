@@ -7,7 +7,6 @@ export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   const isAdminRoute = pathname.startsWith("/admin") && !pathname.startsWith("/admin/login");
-  const isAdminApiRoute = pathname.startsWith("/api/auth") && !pathname.endsWith("/me");
 
   if (isAdminRoute) {
     const token = request.cookies.get(AUTH_COOKIE)?.value;
@@ -18,20 +17,11 @@ export function proxy(request: NextRequest) {
     }
   }
 
-  if (isAdminApiRoute && pathname !== "/api/auth") {
-    const token = request.cookies.get(AUTH_COOKIE)?.value;
-    if (!token) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-  }
-
   return NextResponse.next();
 }
 
 export const config = {
   matcher: [
     "/admin/:path*",
-    "/api/players/:path*",
-    "/api/announcements/:path*",
   ],
 };
