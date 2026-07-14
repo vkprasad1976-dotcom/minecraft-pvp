@@ -1,14 +1,21 @@
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
+import { requireAdmin } from "@/lib/auth";
 
 export async function PUT(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    await requireAdmin();
+  } catch {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  try {
     const { id } = await params;
     const body = await request.json();
-    const { title, content, author, pinned } = body;
+    const { title, content, author, category, pinned } = body;
 
     const announcement = await prisma.announcement.findUnique({ where: { id } });
     if (!announcement) {
@@ -21,6 +28,7 @@ export async function PUT(
         ...(title !== undefined && { title }),
         ...(content !== undefined && { content }),
         ...(author !== undefined && { author }),
+        ...(category !== undefined && { category }),
         ...(pinned !== undefined && { pinned }),
       },
     });
@@ -35,6 +43,12 @@ export async function DELETE(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  try {
+    await requireAdmin();
+  } catch {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   try {
     const { id } = await params;
     const announcement = await prisma.announcement.findUnique({ where: { id } });

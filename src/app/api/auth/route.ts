@@ -23,7 +23,16 @@ export async function POST(request: Request) {
 
     const token = signToken({ id: admin.id, username: admin.username });
 
-    return NextResponse.json({ token, username: admin.username });
+    const response = NextResponse.json({ token, username: admin.username });
+    response.cookies.set("admin_token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+      maxAge: 60 * 60 * 24,
+    });
+
+    return response;
   } catch {
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }

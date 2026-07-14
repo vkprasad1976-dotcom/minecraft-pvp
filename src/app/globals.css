@@ -1,12 +1,13 @@
 @import "tailwindcss";
 
 :root {
-  --background: #0d0d1a;
+  --background: #0B0B12;
   --foreground: #e0e0ff;
   --purple-glow: #a855f7;
   --purple-neon: #c084fc;
   --glass-bg: rgba(20, 20, 45, 0.6);
   --glass-border: rgba(168, 85, 247, 0.3);
+  --sidebar-bg: rgba(12, 12, 24, 0.95);
 }
 
 @theme inline {
@@ -16,6 +17,7 @@
   --color-purple-neon: var(--purple-neon);
   --color-glass-bg: var(--glass-bg);
   --color-glass-border: var(--glass-border);
+  --color-sidebar-bg: var(--sidebar-bg);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -29,6 +31,11 @@ body {
 @keyframes fadeInUp {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInLeft {
+  from { opacity: 0; transform: translateX(-20px); }
+  to { opacity: 1; transform: translateX(0); }
 }
 
 @keyframes glow {
@@ -46,8 +53,22 @@ body {
   50% { opacity: 0.8; }
 }
 
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
 .animate-fade-in-up {
   animation: fadeInUp 0.5s ease-out forwards;
+}
+
+.animate-fade-in-left {
+  animation: fadeInLeft 0.5s ease-out forwards;
 }
 
 .animate-glow {
@@ -56,6 +77,16 @@ body {
 
 .animate-float {
   animation: float 3s ease-in-out infinite;
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, transparent, rgba(168, 85, 247, 0.1), transparent);
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+.animate-slide-in {
+  animation: slideIn 0.3s ease-out forwards;
 }
 
 .glass-card {
@@ -71,6 +102,14 @@ body {
   box-shadow: 0 0 20px rgba(168, 85, 247, 0.15);
 }
 
+.glass-card-static {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: 12px;
+}
+
 .purple-neon-text {
   color: var(--purple-neon);
   text-shadow: 0 0 10px rgba(192, 132, 252, 0.5), 0 0 20px rgba(192, 132, 252, 0.3);
@@ -83,16 +122,124 @@ body {
 
 .pixel-border {
   border: 2px solid rgba(168, 85, 247, 0.5);
-  box-shadow: 
+  box-shadow:
     inset 2px 2px 0 rgba(168, 85, 247, 0.3),
     inset -2px -2px 0 rgba(168, 85, 247, 0.1);
 }
 
 .bg-minecraft-grid {
-  background-image: 
+  background-image:
     linear-gradient(rgba(168, 85, 247, 0.03) 1px, transparent 1px),
     linear-gradient(90deg, rgba(168, 85, 247, 0.03) 1px, transparent 1px);
   background-size: 32px 32px;
+}
+
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #9ca3af;
+  transition: all 0.2s ease;
+}
+
+.sidebar-link:hover {
+  color: #c084fc;
+  background: rgba(168, 85, 247, 0.1);
+}
+
+.sidebar-link.active {
+  color: #c084fc;
+  background: rgba(168, 85, 247, 0.15);
+  border: 1px solid rgba(168, 85, 247, 0.3);
+  box-shadow: 0 0 10px rgba(168, 85, 247, 0.1);
+}
+
+.admin-input {
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(168, 85, 247, 0.3);
+  color: white;
+  font-size: 14px;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.admin-input:focus {
+  border-color: #a855f7;
+  box-shadow: 0 0 0 2px rgba(168, 85, 247, 0.2);
+}
+
+.admin-input::placeholder {
+  color: #6b7280;
+}
+
+.admin-btn {
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+}
+
+.admin-btn-primary {
+  background: rgba(168, 85, 247, 0.2);
+  border-color: rgba(168, 85, 247, 0.5);
+  color: #c084fc;
+}
+
+.admin-btn-primary:hover {
+  background: rgba(168, 85, 247, 0.3);
+  box-shadow: 0 0 15px rgba(168, 85, 247, 0.2);
+  transform: translateY(-1px);
+}
+
+.admin-btn-danger {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.3);
+  color: #f87171;
+}
+
+.admin-btn-danger:hover {
+  background: rgba(239, 68, 68, 0.25);
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.15);
+}
+
+.admin-btn-secondary {
+  background: rgba(75, 85, 99, 0.2);
+  border-color: rgba(75, 85, 99, 0.4);
+  color: #9ca3af;
+}
+
+.admin-btn-secondary:hover {
+  background: rgba(75, 85, 99, 0.3);
+}
+
+.stat-card {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(16px);
+  border-radius: 12px;
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(168, 85, 247, 0.5), transparent);
 }
 
 ::-webkit-scrollbar {
@@ -100,7 +247,7 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #0d0d1a;
+  background: #0B0B12;
 }
 
 ::-webkit-scrollbar-thumb {

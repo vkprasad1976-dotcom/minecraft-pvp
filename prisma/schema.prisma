@@ -10,24 +10,32 @@ datasource db {
 model Player {
   id        String   @id @default(uuid())
   username  String   @unique
+  uuid      String?
+  rank      String?
   elo       Int      @default(1200)
+  sortOrder Int      @default(0)
   wins      Int      @default(0)
   losses    Int      @default(0)
   kills     Int      @default(0)
   deaths    Int      @default(0)
+  winStreak Int      @default(0)
   badge     String?
+  country   String?
+  notes     String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model Announcement {
-  id        String   @id @default(uuid())
-  title     String
-  content   String
-  author    String
-  pinned    Boolean  @default(false)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          String   @id @default(uuid())
+  title       String
+  content     String
+  author      String
+  category    String   @default("General")
+  pinned      Boolean  @default(false)
+  publishDate DateTime @default(now())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 model Admin {

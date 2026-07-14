@@ -21,10 +21,6 @@ export default async function PlayerProfilePage({
     select: { elo: true },
   });
   const rank = allPlayers.findIndex((p) => p.elo === player.elo) + 1;
-  const kd = player.deaths > 0 ? (player.kills / player.deaths).toFixed(2) : player.kills.toFixed(2);
-  const winRate = player.wins + player.losses > 0
-    ? ((player.wins / (player.wins + player.losses)) * 100).toFixed(1)
-    : "0.0";
 
   const badgeColor =
     player.badge === "Champion"
@@ -56,7 +52,7 @@ export default async function PlayerProfilePage({
             className="rounded-xl pixel-border animate-float"
           />
           <div className="text-center sm:text-left">
-            <div className="flex items-center gap-3 justify-center sm:justify-start mb-1">
+            <div className="flex items-center gap-3 justify-center sm:justify-start mb-1 flex-wrap">
               <h1 className="text-3xl font-bold">{player.username}</h1>
               {player.badge && (
                 <span className={`px-3 py-1 rounded-full text-sm font-bold border bg-gradient-to-r ${badgeColor}`}>
@@ -64,41 +60,41 @@ export default async function PlayerProfilePage({
                 </span>
               )}
             </div>
-            <div className="text-gray-400">
-              Rank <span className="purple-neon-text font-bold">#{rank}</span> · ELO{" "}
-              <span className="purple-neon-text font-bold">{player.elo}</span>
+            <div className="text-gray-400 space-x-3">
+              <span>Rank <span className="purple-neon-text font-bold">#{rank}</span></span>
+              <span>·</span>
+              <span>ELO <span className="purple-neon-text font-bold">{player.elo}</span></span>
+              {player.country && (
+                <>
+                  <span>·</span>
+                  <span>{player.country}</span>
+                </>
+              )}
             </div>
           </div>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
-          {[
-            { label: "Wins", value: player.wins, color: "text-green-400" },
-            { label: "Losses", value: player.losses, color: "text-red-400" },
-            { label: "Win Rate", value: `${winRate}%`, color: "text-purple-neon" },
-            { label: "K/D Ratio", value: kd, color: "text-blue-400" },
-          ].map((stat) => (
-            <div key={stat.label} className="glass-card p-4 text-center">
-              <div className={`text-2xl font-bold ${stat.color}`}>{stat.value}</div>
-              <div className="text-xs text-gray-400 mt-1">{stat.label}</div>
-            </div>
-          ))}
-        </div>
-
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-          <div className="glass-card p-4 text-center">
-            <div className="text-2xl font-bold">{player.kills}</div>
-            <div className="text-xs text-gray-400 mt-1">Total Kills</div>
-          </div>
-          <div className="glass-card p-4 text-center">
-            <div className="text-2xl font-bold">{player.deaths}</div>
-            <div className="text-xs text-gray-400 mt-1">Total Deaths</div>
-          </div>
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-6">
           <div className="glass-card p-4 text-center">
             <div className="text-2xl font-bold purple-neon-text">#{rank}</div>
             <div className="text-xs text-gray-400 mt-1">Global Rank</div>
           </div>
+          <div className="glass-card p-4 text-center">
+            <div className="text-2xl font-bold purple-neon-text">{player.elo}</div>
+            <div className="text-xs text-gray-400 mt-1">ELO Rating</div>
+          </div>
+          <div className="glass-card p-4 text-center">
+            <div className="text-2xl font-bold text-amber-400">{player.winStreak}</div>
+            <div className="text-xs text-gray-400 mt-1">Win Streak</div>
+          </div>
         </div>
+
+        {player.notes && (
+          <div className="glass-card p-4">
+            <div className="text-xs text-gray-500 mb-1">Notes</div>
+            <p className="text-sm text-gray-300">{player.notes}</p>
+          </div>
+        )}
       </div>
     </div>
   );

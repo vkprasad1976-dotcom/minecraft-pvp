@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
+import { requireAdmin } from "@/lib/auth";
 
 export async function GET(
   _request: Request,
@@ -18,9 +19,15 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    await requireAdmin();
+  } catch {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  try {
     const { id } = await params;
     const body = await request.json();
-    const { username, elo, wins, losses, kills, deaths, badge } = body;
+    const { username, uuid, rank, elo, wins, losses, kills, deaths, winStreak, badge, country, notes } = body;
 
     const player = await prisma.player.findUnique({ where: { id } });
     if (!player) {
@@ -31,12 +38,17 @@ export async function PUT(
       where: { id },
       data: {
         ...(username !== undefined && { username }),
+        ...(uuid !== undefined && { uuid: uuid || null }),
+        ...(rank !== undefined && { rank: rank || null }),
         ...(elo !== undefined && { elo }),
         ...(wins !== undefined && { wins }),
         ...(losses !== undefined && { losses }),
         ...(kills !== undefined && { kills }),
         ...(deaths !== undefined && { deaths }),
-        ...(badge !== undefined && { badge }),
+        ...(winStreak !== undefined && { winStreak }),
+        ...(badge !== undefined && { badge: badge || null }),
+        ...(country !== undefined && { country: country || null }),
+        ...(notes !== undefined && { notes: notes || null }),
       },
     });
 
@@ -50,6 +62,12 @@ export async function DELETE(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  try {
+    await requireAdmin();
+  } catch {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   try {
     const { id } = await params;
     const player = await prisma.player.findUnique({ where: { id } });
