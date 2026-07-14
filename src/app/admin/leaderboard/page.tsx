@@ -153,6 +153,8 @@ export default function AdminLeaderboardPage() {
     }
   };
 
+  const isEditing = (id: string) => editingElo === id || editingBadge === id;
+
   return (
     <AdminSidebar>
       <div className="max-w-6xl mx-auto">
@@ -268,7 +270,7 @@ export default function AdminLeaderboardPage() {
                     return (
                       <tr
                         key={p.id}
-                        draggable
+                        draggable={!isEditing(p.id)}
                         onDragStart={(e) => handleDragStart(e, i)}
                         onDragOver={(e) => handleDragOver(e, i)}
                         onDrop={(e) => handleDrop(e, i)}
@@ -303,6 +305,7 @@ export default function AdminLeaderboardPage() {
                               type="number"
                               autoFocus
                               defaultValue={p.elo}
+                              onPointerDown={(e) => e.stopPropagation()}
                               onBlur={(e) => handleEloChange(p.id, Number(e.target.value))}
                               onKeyDown={(e) => {
                                 if (e.key === "Enter") (e.target as HTMLInputElement).blur();
@@ -326,7 +329,8 @@ export default function AdminLeaderboardPage() {
                               autoFocus
                               value={p.badge || ""}
                               onChange={(e) => handleBadgeChange(p.id, e.target.value)}
-                              onBlur={() => setEditingBadge(null)}
+                              onPointerDown={(e) => e.stopPropagation()}
+                              onBlur={() => setTimeout(() => setEditingBadge(null), 150)}
                               className="admin-input text-xs py-1 px-2 w-28"
                             >
                               <option value="">No Badge</option>

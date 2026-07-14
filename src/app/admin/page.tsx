@@ -308,7 +308,7 @@ export default function AdminDashboardPage() {
                           autoFocus
                           value={p.badge || ""}
                           onChange={(e) => handleBadgeChange(p.id, e.target.value)}
-                          onBlur={() => setEditingBadge(null)}
+                          onBlur={() => setTimeout(() => setEditingBadge(null), 150)}
                           className="admin-input text-xs py-1 px-2 w-24"
                         >
                           <option value="">No Badge</option>
